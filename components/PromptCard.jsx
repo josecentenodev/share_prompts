@@ -5,10 +5,21 @@ import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 
 const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
-    const [copied, setCopied] = useState('')
     const { data: session } = useSession()
     const pathName = usePathname()
     const router = useRouter()
+    const [copied, setCopied] = useState('')
+    const username = post.creator.username
+    const userId = post.creator._id
+
+    const handleProfileClick = () => {
+        // console.log(post)
+        // console.log(userId, session.user.id)
+
+        if (userId === session.user.id) return router.push('/profile')
+
+        router.push(`/profile/${userId}?name=${username}`)
+    }
 
     const handleCopy = () => {
         setCopied(post.prompt)
@@ -18,7 +29,10 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
     return (
         <div className='prompt_card'>
             <div className='flex justify-between items-start gap-5'>
-                <div className='flex-1 flex justify-start items-center gap-3 cursor-pointer'>
+                <div
+                    className='flex-1 flex justify-start items-center gap-3 cursor-pointer'
+                    onClick={handleProfileClick}
+                >
                     <Image
                         src={post.creator.image}
                         alt='user_image'
